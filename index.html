@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Ivan Kapunac">
+    <meta name="description" content="Optional Assignment by Ivan Jezdovic">
+    <title>Movies</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background:#444;
+      }
+      table,
+      th,
+      tr,
+      td {
+        font-size:20px;
+        border: 1px solid white;
+        color:white;
+        border-collapse: collapse;
+        padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 style="color:white;">Movies</h1>
+    <div class="searches">
+      <input type="text" id="searchByName" />
+      <button id="searchByNameBtn">Search By Name</button>
+    </div>
+    <hr />
+    <table id="root">
+      <tr>
+        <th>Movie Name</th>
+        <th>Movie Rating</th>
+        <th>Movie ID</th>
+      </tr>
+    </table>
+    <script>
+      const root = document.getElementById("root");
+      const nameSrchBtn = document.getElementById("searchByNameBtn");
+
+      let moviesInfo = [];
+
+      const url =
+        "https://raw.githubusercontent.com/hjorturlarsen/IMDB-top-100/master/data/movies.json";
+      fetch(url)
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          data.forEach((e) => {
+            moviesInfo.push(new Movie(e.title, e.rank, e.id));
+            let trEl = document.createElement("tr");
+            trEl.innerHTML = `
+            <td class='movieTitle' id='${e.id}'>${e.title}</td>
+            <td class='movieRank'>${e.rank}</td>
+            <td class='movieID'>${e.id}</td>
+            `;
+            root.append(trEl);
+          });
+        });
+        class Movie {
+        constructor(title, rank, id) {
+          this.title = title;
+          this.rank = rank;
+          this.id = id;
+        }
+      }
+      
+
+      let arrOfTitles = [];
+      nameSrchBtn.onclick = function () {
+        const searchByName = document.getElementById("searchByName").value;
+        let moviesList = document.querySelectorAll(".movieTitle");
+        moviesList.forEach(e=>{
+          e.style.color = "white";
+        })
+      moviesInfo.forEach(function loop(e){
+        arrOfTitles.push(e.title.toLowerCase())
+        if(e.title.toLowerCase() == searchByName.toLowerCase()){
+            let selectedMovie = document.querySelector(`#${e.id}`);
+            selectedMovie.style.color = "red";
+              return alert(`The movie you picked is in our table and it has a rank of ${e.rank}`);
+          }
+      })
+      
+      if(!(arrOfTitles.includes(searchByName.toLowerCase()))){
+        return alert(`You picked a movie with title: ${searchByName.toUpperCase()}. That movie is not in our list or You've type the name wrong. Check the spelling and try again!`)
+      } 
+         }
+    </script>
+  </body>
+</html>
